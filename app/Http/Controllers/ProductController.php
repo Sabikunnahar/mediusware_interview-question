@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 use App\Models\Variant;
 use Illuminate\Http\Request;
+use Carbon\Doctrine\CarbonType;
+use Illuminate\Support\Carbon as SupportCarbon;
+use Carbon\Carbon;
 
 class ProductController extends Controller
 {
@@ -17,7 +22,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('products.index');
+        $products = Product::paginate(10);
+        return view('products.index', compact('products'));
+        // return view('products.index');
+
     }
 
     /**
@@ -39,6 +47,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'title'=>'required',
+            'sku'=>'required',
+            'description'=>'required',
+        ]);
+        Product::insert([
+            'title' =>$request->title,
+            'sku' =>$request->sku,
+            'description' =>$request->description,
+            'created_at' =>Carbon::now(),
+        ]);
+        return redirect()->back()->with('Created Success');
 
     }
 
@@ -59,7 +79,7 @@ class ProductController extends Controller
      *
      * @param \App\Models\Product $product
      * @return \Illuminate\Http\Response
-     */
+     * */
     public function edit(Product $product)
     {
         $variants = Variant::all();
@@ -73,9 +93,29 @@ class ProductController extends Controller
      * @param \App\Models\Product $product
      * @return \Illuminate\Http\Response
      */
+
     public function update(Request $request, Product $product)
     {
-        //
+        $id= $request->id;
+
+        $request->validate([
+            'title'=>'required',
+            'sku'=>'required',
+            'description'=>'required',
+        ]);
+
+        Product::findOrFail($id)->update([
+            'title' =>$request->title,
+            'sku' =>$request->sku,
+            'description' =>$request->description,
+            'updated_at' =>Carbon::now(),
+        ]);
+
+        $notification=array(
+            'message'=>'update Success',
+            'alert-type'=>'success'
+             );
+        return redirect()->route('latest_news_create')->with($notification);
     }
 
     /**

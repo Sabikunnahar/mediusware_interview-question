@@ -14,9 +14,17 @@
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
+                    @php
+                    $variant_names = App\Models\ProductVariant::orderBy('id','ASC')->get();
+                    @endphp
                     <select name="variant" id="" class="form-control">
-
+                        <option value=""disabled selected hidden>Select variant</option>
+                        @foreach ($variant_names as $item)
+                        <option value="volvo">{{$item->variant}}</option>
+                        @endforeach
                     </select>
+                    
+                    
                 </div>
 
                 <div class="col-md-3">
@@ -51,16 +59,16 @@
                     </thead>
 
                     <tbody>
-
-                    <tr>
-                        <td>1</td>
-                        <td>T-Shirt <br> Created at : 25-Aug-2020</td>
-                        <td>Quality product in low cost</td>
+                        @foreach($products as $key=>$products)
+                        <tr>
+                            <td>{{ $key +1 }}</td>
+                            <td>{{ $products->title }}</td>
+                            <td>{{ nl2br($products->description) }}</td>
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
 
                                 <dt class="col-sm-3 pb-0">
-                                    SM/ Red/ V-Nick
+                                    {{ nl2br($products->sku) }}
                                 </dt>
                                 <dd class="col-sm-9">
                                     <dl class="row mb-0">
@@ -77,6 +85,7 @@
                             </div>
                         </td>
                     </tr>
+                    @endforeach
 
                     </tbody>
 
@@ -88,13 +97,32 @@
         <div class="card-footer">
             <div class="row justify-content-between">
                 <div class="col-md-6">
-                    <p>Showing 1 to 10 out of 100</p>
+                    <p>Showing 1 to {{ $key +1 }} out of {{ $key +1 }}</p>
                 </div>
                 <div class="col-md-2">
 
                 </div>
             </div>
         </div>
+        <nav aria-label="Page navigation example" style="float: center">
+            <ul class="pagination">
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
     </div>
 
 @endsection
